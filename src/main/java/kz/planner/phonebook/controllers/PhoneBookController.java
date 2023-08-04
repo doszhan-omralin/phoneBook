@@ -3,25 +3,29 @@ package kz.planner.phonebook.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import kz.planner.phonebook.models.PhoneBook;
 import kz.planner.phonebook.repositories.PhoneBookRepository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+
+
 @Controller
 public class PhoneBookController {
+    private final JdbcTemplate jdbcTemplate;
+
+
 
     private final PhoneBookRepository phoneBookRepository;
 
     @Autowired
-    public PhoneBookController(PhoneBookRepository phoneBookRepository) {
+    public PhoneBookController(JdbcTemplate jdbcTemplate, PhoneBookRepository phoneBookRepository) {
+        this.jdbcTemplate = jdbcTemplate;
         this.phoneBookRepository = phoneBookRepository;
     }
 
@@ -77,6 +81,13 @@ public class PhoneBookController {
             phoneBook.setName(newName);
             phoneBookRepository.save(phoneBook);
         }
+        return "redirect:/";
+    }
+
+    @PostMapping("/clearTable")
+    public String clearTable() {
+        phoneBookRepository.deleteAll();
+        jdbcTemplate.update("ALTER TABLE phone_book AUTO_INCREMENT = 1");
         return "redirect:/";
     }
 
