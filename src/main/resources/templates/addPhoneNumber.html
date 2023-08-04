@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Редактирование</title>
+</head>
+<body>
+<h1>Редактирование таблицы</h1>
+<form method="post" th:action="@{/addPhoneNumber}">
+    <label>Имя: <input type="text" name="name" th:value="${name}"></label>
+    <label>Номер телефона: <input type="text" name="phoneNumber"></label>
+    <input type="submit" value="Добавить">
+</form>
+
+<form method="post" th:action="@{/deletePhoneNumber}">
+    <label>Удалить по id: <input type="number" name="id"></label>
+    <input type="submit" value="Удалить">
+</form>
+
+<form method="post" th:action="@{/updatePhoneNumber}">
+    <label>Обновить по id: <input type="number" name="id"></label>
+    <label>Новое имя: <input type="text" name="newName"></label>
+    <label>Новый номер телефона: <input type="text" name="newPhoneNumber"></label>
+    <input type="submit" value="Обновить">
+</form>
+
+<script>
+    document.getElementById("addContactForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        addPhoneBook();
+    });
+
+    function addPhoneBook() {
+        const name = document.querySelector('input[name="name"]').value;
+        const phoneNumber = document.querySelector('input[name="phoneNumber"]').value;
+
+        fetch('/addPhoneNumber', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                phoneNumber: phoneNumber
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                return response.text();
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+</body>
+</html>
